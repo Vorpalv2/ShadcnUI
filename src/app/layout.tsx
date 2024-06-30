@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat as Fontsans } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+import NavBar from "@/components/Navbar";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ModeToggle } from "@/components/ThemeSwitcher";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontSans = Fontsans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +23,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={cn(
+          "min-h-screen w-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className=" flex justify-center py-10">
+            <NavBar />
+            <span className=" justify-end pl-5">
+              <ModeToggle />
+            </span>
+          </div>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
