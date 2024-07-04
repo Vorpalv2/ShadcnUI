@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import NavBar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ModeToggle } from "@/components/ThemeSwitcher";
+import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "next-auth/react";
 
 const fontSans = Fontsans({
   subsets: ["latin"],
@@ -29,20 +31,23 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className=" flex justify-center py-10">
-            <NavBar />
-            <span className=" justify-end pl-5">
-              <ModeToggle />
-            </span>
-          </div>
-          {children}
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className=" flex justify-center py-10">
+              <NavBar />
+              <span className=" justify-end pl-5">
+                <ModeToggle />
+              </span>
+            </div>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -9,11 +9,11 @@ export default async function Home() {
 
   return (
     <main className="p-10 m-10">
-      <section className="flex gap-10">
-        <div className="left w-1/2 text-black">
+      <section className="gap-10 md:flex justify-center">
+        <div className="left w-1/2 sm:w-full text-black">
           <CarouselComponent />
         </div>
-        <div className="right w-1/2 p-5">
+        <div className="right w-1/2 sm:w-full p-5">
           <div className="grid grid-cols-1">
             <div className="m-10">
               <AccordionComponent />

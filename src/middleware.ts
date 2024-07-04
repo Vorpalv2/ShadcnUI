@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "./auth";
 
 console.log("hello");
 export async function middleware(request: NextRequest) {
-  const session = request.cookies.get("authjs.session-token");
-  const { href, origin, pathname } = request.nextUrl;
+  const currentUser = await auth();
+  console.log(currentUser);
+  const cookie = request.cookies.get("authjs.session-token");
+  const { origin, pathname } = request.nextUrl;
   if (pathname == "/dashboard") {
-    if (session != undefined) {
-      return NextResponse.redirect(origin);
-    } else {
-      return NextResponse.redirect(origin + "/newuser/register");
+    console.log(pathname);
+    if (currentUser == null) {
+      return NextResponse.redirect(origin + "/sign-in  ");
     }
+    console.log(origin);
+    // return NextResponse.redirect(origin + "/dashboard");
   }
 }
 
