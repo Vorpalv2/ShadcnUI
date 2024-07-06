@@ -18,64 +18,74 @@ import React, { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, loginSchemaType } from "@/validationSchema/loginSchema";
-type loginForm = {
-  email: string;
-  password: string;
-};
+import { useToast } from "@/components/ui/use-toast";
 
 export default function LoginForm() {
+  const { toast } = useToast();
   const [APIError, setAPIError] = useState<string | null>(null);
-
-  // const {
-  //   register,
-  //   setError,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<loginForm>();
 
   const {
     register,
     setError,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields },
   } = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
 
+  useEffect(() => {
+    if (errors.email) {
+      toast({
+        title: "Email Error",
+        description: errors.email.message,
+      });
+    }
+    if (errors.password) {
+      toast({
+        title: "Password Error",
+        description: errors.password.message,
+      });
+    }
+    return () => {};
+  }, [toast, errors]);
+
   // const onSubmit: SubmitHandler<loginForm> = async (data, event)
   const onSubmit: SubmitHandler<loginSchemaType> = async (data, event) => {
+    // console.log(touchedFields);
     try {
       event?.preventDefault();
       const response = await fetch("http://localhost:3000/api/formAPI", {
         method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         body: JSON.stringify(data),
       });
-      console.log("Response : ", response);
+      console.log(errors);
       if (!response.ok) {
         const errorData = await response.json();
         setError(
           "password",
-          errorData.message || "Error Occured with Error message  uring login"
+          errorData.message || "Error Occured with Error message during login"
         );
+        toast({
+          title: "Something went Wrong",
+          description: errorData.message,
+        });
         setAPIError(
           errorData.message || "An error occured while trying to login"
         );
       } else {
+        toast({
+          title: "Logging In",
+          description: "Success",
+        });
         return response.json();
       }
     } catch (error) {
+      console.log(error);
       setAPIError("Network Error");
     }
   };
   // const test = (data) => console.log(data);
-  useEffect(() => {
-    setError("password", { type: "minLength", message: "Password is short" });
-  }, [setError]);
 
-  console.log("Error : ", errors);
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -124,9 +134,9 @@ export default function LoginForm() {
           <SignIn />
         </div>
         <div className="mt-4 text-center text-sm">
-          No Account? Join Today{" "}
+          No Account?{" "}
           <Link href="/register" className="underline">
-            Sign up
+            Register Today
           </Link>
         </div>
       </CardContent>

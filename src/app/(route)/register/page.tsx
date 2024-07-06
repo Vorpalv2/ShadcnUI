@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SignIn } from "@/components/SignIn";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 // import React, { useEffect, useState } from "react";
@@ -20,15 +19,42 @@ import {
   registerSchema,
   registerSchemaType,
 } from "@/validationSchema/registerSchema";
-import { error } from "console";
+
+import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 export default function Registerpage() {
+  const { toast } = useToast();
+
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
   } = useForm<registerSchemaType>({ resolver: zodResolver(registerSchema) });
+
+  useEffect(() => {
+    if (errors.username) {
+      toast({
+        title: "Error with Username",
+        description: errors.username.message,
+      });
+    }
+    if (errors.email) {
+      toast({
+        title: "Error with email",
+        description: errors.email.message,
+      });
+    }
+    if (errors.password) {
+      toast({
+        title: "Error with Password",
+        description: errors.password.message,
+      });
+    }
+
+    return () => {};
+  }, [toast, errors]);
 
   const onSubmit: SubmitHandler<registerSchemaType> = async (data, event) => {
     // console.log("running");
@@ -52,7 +78,7 @@ export default function Registerpage() {
       setError("root", error || "something went wrong with the server");
     }
   };
-  console.log(errors);
+  //   console.log(errors);
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
