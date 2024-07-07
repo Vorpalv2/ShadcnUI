@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   console.log(currentUser);
   const cookie = request.cookies.get("authjs.session-token");
   const { origin, pathname } = request.nextUrl;
-  if (pathname == "/dashboard") {
+  if (pathname.includes("/dashboard") || pathname.includes("/posts")) {
     console.log(pathname);
     if (currentUser == null) {
       return NextResponse.redirect(origin + "/sign-in  ");
@@ -19,5 +19,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard"],
+  matcher: ["/", "/dashboard", "/posts"],
 };

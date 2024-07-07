@@ -22,8 +22,11 @@ import {
 
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import useAPIRequest from "@/customHooks/useAPIRequest";
 
 export default function Registerpage() {
+  const { data, error, isLoading, makeRequest } = useAPIRequest();
+
   const { toast } = useToast();
 
   const {
@@ -58,27 +61,51 @@ export default function Registerpage() {
 
   const onSubmit: SubmitHandler<registerSchemaType> = async (data, event) => {
     // console.log("running");
-    try {
-      event?.preventDefault();
-      const response = await fetch("http://localhost:3000/api/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    // try {
+    event?.preventDefault();
+
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+
+    await makeRequest("http://localhost:3000/api/register", options);
+    if (!error) {
+      toast({
+        title: "Success",
+        description: "Registered",
       });
-      //   console.log(response);
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError("root", errorData || "error occured in register API call");
-      } else {
-        return response.json();
-      }
-    } catch (error) {
-      setError("root", error || "something went wrong with the server");
+      console.log(data);
+    } else {
+      toast({
+        title: "Failure",
+        description: "Something went wrong",
+      });
+      console.log(error);
     }
+
+    //   const response = await fetch("http://localhost:3000/api/register", {
+    //     method: "POST",
+    //     body: JSON.stringify(data),
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   });
+    //   //   console.log(response);
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     setError("root", errorData || "error occured in register API call");
+    //   } else {
+    //     return response.json();
+    //   }
+    // } catch (error) {
+    //   setError("root", error || "something went wrong with the server");
+    // }
   };
-  //   console.log(errors);
+
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>

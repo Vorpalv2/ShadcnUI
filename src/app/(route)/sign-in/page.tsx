@@ -22,13 +22,12 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function LoginForm() {
   const { toast } = useToast();
-  const [APIError, setAPIError] = useState<string | null>(null);
 
   const {
     register,
     setError,
     handleSubmit,
-    formState: { errors, touchedFields },
+    formState: { errors },
   } = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
@@ -49,7 +48,6 @@ export default function LoginForm() {
     return () => {};
   }, [toast, errors]);
 
-  // const onSubmit: SubmitHandler<loginForm> = async (data, event)
   const onSubmit: SubmitHandler<loginSchemaType> = async (data, event) => {
     // console.log(touchedFields);
     try {
@@ -69,9 +67,6 @@ export default function LoginForm() {
           title: "Something went Wrong",
           description: errorData.message,
         });
-        setAPIError(
-          errorData.message || "An error occured while trying to login"
-        );
       } else {
         toast({
           title: "Logging In",
@@ -81,10 +76,8 @@ export default function LoginForm() {
       }
     } catch (error) {
       console.log(error);
-      setAPIError("Network Error");
     }
   };
-  // const test = (data) => console.log(data);
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -107,6 +100,9 @@ export default function LoginForm() {
                 placeholder="m@example.com"
                 required
               />
+              {errors.email?.message && (
+                <p className="text-sm py-2"> {errors.email.message} </p>
+              )}
             </div>
             <div className="grid gap-2">
               <div className="flex items-center my-2">
@@ -125,8 +121,10 @@ export default function LoginForm() {
                 // defaultValue={"12345"}
                 {...register("password")}
               />
-              {APIError && <p>{APIError}</p>}
             </div>
+            {errors.password?.message && (
+              <p className="text-sm py-2">{errors.password.message}</p>
+            )}
             <Button type="submit" className="w-full mt-4">
               Login
             </Button>

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ModeToggle } from "@/components/ThemeSwitcher";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
+import Container from "@/components/Container";
 
 const fontSans = Fontsans({
   subsets: ["latin"],
@@ -44,7 +45,7 @@ export default function RootLayout({
                 <ModeToggle />
               </span>
             </div>
-            {children}
+            <Container>{children}</Container>
             <Toaster />
           </ThemeProvider>
         </SessionProvider>
